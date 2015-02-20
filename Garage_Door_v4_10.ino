@@ -68,7 +68,8 @@ void loop() {
         WeMoLastStatus=digitalRead(WeMoStatus);
         DoorMoved=false;
       }
-      door_state=CurrentDoorStatus();      
+      door_state=CurrentDoorStatus();
+      delay(100);   // delay in between reads for stability   
     }
     break;
   case DoorOpen:
@@ -84,7 +85,8 @@ void loop() {
         WeMoLastStatus=digitalRead(WeMoStatus);
         DoorMoved=false;
       }
-      door_state=CurrentDoorStatus();
+      door_state=CurrentDoorStatus(); // delay in between reads for stability
+      delay(100);
     }
     break;
   case DoorInBetween:
@@ -92,6 +94,7 @@ void loop() {
       //If the door moved, set the status variable to true so that we can resync the Wemo if needed once the garage door is stationary again
       DoorMoved=true;
       door_state=CurrentDoorStatus();
+      delay(100);
     }
     break;
   }
@@ -105,7 +108,7 @@ int CheckAndFixWeMoSync(){
     digitalWrite(WeMoToggle, LOW);
     delay(500);
     digitalWrite(WeMoToggle, HIGH);
-    delay(500);
+    delay(500); // delay in between reads for stability
   }
 }
 
