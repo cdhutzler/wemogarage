@@ -76,6 +76,7 @@ void loop() {
     {
       //Did the WeMo status change? If so, move that door.
       if (WeMoStatusChanged()){
+        soundWarningBeeper();
         moveDoor();
         WeMoLastStatus=digitalRead(WeMoStatus);
       }  
@@ -94,7 +95,7 @@ void loop() {
       //If the door moved, set the status variable to true so that we can resync the Wemo if needed once the garage door is stationary again
       DoorMoved=true;
       door_state=CurrentDoorStatus();
-      delay(100);
+      delay(100); // delay in between reads for stability
     }
     break;
   }
@@ -108,7 +109,7 @@ int CheckAndFixWeMoSync(){
     digitalWrite(WeMoToggle, LOW);
     delay(500);
     digitalWrite(WeMoToggle, HIGH);
-    delay(500); // delay in between reads for stability
+    delay(500); 
   }
 }
 
@@ -148,9 +149,7 @@ int CurrentDoorStatus () {
   }
 }
 
-//This routine moves the door. First it sounds the buzzer for 5 seconds, then it toggles the Darlington Transistor (or a relay) to make the door move. 
-//Lastly it checks to be sure the door did move otherwise it tries one more time - some doors do not pay attention the first time for some reason. Chamberlin seems to have this issue.
-int moveDoor (){ 
+int soundWarningBeeper (){ 
   //Sound the alarm buzzer for 5 seconds to warn anyone in or around the garage that the door is about to move. 
   for (int i=0; i <= 5; i++){  
     digitalWrite(Buzzer, HIGH);
@@ -158,7 +157,11 @@ int moveDoor (){
     digitalWrite(Buzzer, LOW);
     delay (500);
   }    
+}
 
+//This routine moves the door. First it sounds the buzzer for 5 seconds, then it toggles the Darlington Transistor (or a relay) to make the door move. 
+//Lastly it checks to be sure the door did move otherwise it tries one more time - some doors do not pay attention the first time for some reason. Chamberlin seems to have this issue.
+int moveDoor (){ 
   digitalWrite(GarageDoorToggle, HIGH);
   delay(800);
   digitalWrite(GarageDoorToggle, LOW);
